@@ -1,0 +1,54 @@
+
+#headline {
+	font-family: "Times New Roman", serif;
+	font-size: 3em;
+	  margin-left: 225px;
+  }.container {
+		border: 2px solid;
+		box-shadow: 5px 10px #919191;
+  }
+  
+#choropleth_map {
+	top:100px;
+	bottom: 100px; 
+	left: 100px;
+	right: 100px;
+	height: 1000px;
+	width: 800px;
+}
+
+#bubbleplot{
+	top:100px;
+	bottom: 100px;
+	left: 100px;
+	right: 100px;
+	height: 1000px;
+	width: 800px;
+	/* min-height: 100px; */
+}
+
+#butterflychart{
+	top:100px;
+	bottom: 100px;
+	left: 100px;
+	right: 100px;
+	height: 1000px;
+	width: 800px;
+	/* min-height: 100px; */
+}
+
+#barchart{
+	top:100px;
+	bottom: 100px;
+	left: 100px;
+	right: 100px;
+	height: 1000px;
+	width: 800px;
+	/* min-height: 100px; */
+}
+
+/* .pure-g{
+	margin-bottom: 20px;
+} */
+
+

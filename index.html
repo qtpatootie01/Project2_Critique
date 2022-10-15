@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+
+  <!-- CSS file -->
+  <!-- <link rel="stylesheet" type="text/css" href="css/styles.css" media="all"> -->
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+  <!-- Header (Title) -->
+  <div class="section p-3">
+    <div class="container">
+      <div class="row bg2">
+        <div class="col-12 d-flex justify-content-center">
+          <div class="h1 align-middle p-3" id="headline">
+            Worldwide Life Expectancy over the years (2010 to 2014)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Choropleth Map Section -->
+  <h2>Visualization 1: Worldwide Life Expectancy</h2>
+  <div id="choropleth_map" align="center"></div>
+
+  <!-- bubbleplot selection (interactive) -->
+  <h2>Visualization 2: Life Expectancy vs GDP</h2>
+  <div id="bubbleplot" align="center"></div>
+
+  <!-- butterflychart selection (interactive) -->
+  <h2>Visualization 3: Relationship between Status and Life Expectancy</h2>
+  <div id="butterflychart" align="center"></div>
+
+  <!-- barchart selection (interactive) -->
+  <h2>Visualization 4: Ranking of Life Expectancy</h2>
+  <div id="barchart" align="center"></div>
+
+  <!-- Footer -->
+  <footer class="text-center position-relative">
+      <p class="lead pt-5">Copyright &copy; 2022 Leong Pui Lum</p>
+      <a href="#" class="position-absolute bottom-0 end-0">
+        <i class="bi bi-arrow-up-circle h1"></i>
+      </a>
+  </footer>
+
+  <script type="text/javascript">
+    var choropleth_map = "HomeworkMap.json";
+    vegaEmbed("#choropleth_map", choropleth_map)
+        .then(function (result) {
+          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+        })
+        .catch(console.error);
+
+    var bubbleplot = "bubbleplot.json";
+    vegaEmbed("#bubbleplot", bubbleplot)
+        .then(function (result) {
+          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+        })
+        .catch(console.error);
+      
+
+    var butterflychart = "butterflychart.json";
+    vegaEmbed("#butterflychart", butterflychart)
+        .then(function (result) {
+          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+        })
+        .catch(console.error);
+
+    var barchart = "barchart.json";
+    vegaEmbed("#barchart", barchart)
+        .then(function (result) {
+          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+        })
+        .catch(console.error);
+
+      </script>
+
+
+
+
+  </body>
+</html>
+
+
