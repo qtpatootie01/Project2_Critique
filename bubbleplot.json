@@ -1,0 +1,374 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "white",
+  "padding": 5,
+  "width": 1000,
+  "height": 500,
+  "title": {
+    "text": "Life Expectancy vs GDP per Capita (2014)",
+    "frame": "group"
+  },
+  "style": "cell",
+  "data": [
+    {"name": "status_highlight_store"},
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/qtpatootie01/Homework10_LifeExpectancy/main/LifeExpectancy2014.csv",
+      "format": {
+        "type": "csv",
+        "parse": {"Country": "string"},
+        "delimiter": ","
+      }
+    },
+    {
+      "name": "source_1",
+      "url": "https://raw.githubusercontent.com/qtpatootie01/Homework10_LifeExpectancy/main/json%20files/ne_110m.json",
+      "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+    },
+    {
+      "name": "data_0",
+      "source": "source_0",
+      "transform": [
+        {"type": "filter", "expr": "datum.Life_expectancy > 0"},
+        {"type": "filter", "expr": "datum.GDP > 0"},
+        {"type": "filter", "expr": "datum.Year == 2014"},
+        {
+          "type": "lookup",
+          "from": "source_1",
+          "key": "properties.NAME",
+          "fields": ["Country"],
+          "values": ["properties.POP_EST"]
+        },
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Life_expectancy\"]) && isFinite(+datum[\"Life_expectancy\"]) && isValid(datum[\"GDP\"]) && isFinite(+datum[\"GDP\"]) && isValid(datum[\"Population\"]) && isFinite(+datum[\"Population\"])"
+        }
+      ]
+    },
+    {
+      "name": "data_1",
+      "source": "source_0",
+      "transform": [
+        {"type": "filter", "expr": "datum.Country == 'Luxembourg'"},
+        {
+          "type": "formula",
+          "expr": "'Developed countries have a higher life expectacy'",
+          "as": "text_annotation"
+        }
+      ]
+    },
+    {
+      "name": "data_2",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "indexof([\"Sierra Leone\",\"Luxembourg\",\"Belgium\",\"Germany\",\"Portugal\"], datum[\"Country\"]) !== -1"
+        },
+        {"type": "filter", "expr": "datum.Year == 2014"},
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Life_expectancy\"]) && isFinite(+datum[\"Life_expectancy\"]) && isValid(datum[\"GDP\"]) && isFinite(+datum[\"GDP\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "status_highlight_Status_legend",
+      "value": null,
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Status_legend_symbols"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Status_legend_labels"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Status_legend_entries"
+            }
+          ],
+          "update": "datum.value || item().items[0].items[0].datum.value",
+          "force": true
+        },
+        {
+          "events": [{"source": "view", "type": "click"}],
+          "update": "!event.item || !datum ? null : status_highlight_Status_legend",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "status_highlight",
+      "update": "vlSelectionResolve(\"status_highlight_store\", \"union\", true, true)"
+    },
+    {
+      "name": "status_highlight_tuple",
+      "update": "status_highlight_Status_legend !== null ? {fields: status_highlight_tuple_fields, values: [status_highlight_Status_legend]} : null"
+    },
+    {
+      "name": "status_highlight_tuple_fields",
+      "value": [{"type": "E", "field": "Status"}]
+    },
+    {
+      "name": "status_highlight_toggle",
+      "value": false,
+      "on": [
+        {
+          "events": {"merge": [{"source": "view", "type": "click"}]},
+          "update": "event.shiftKey"
+        }
+      ]
+    },
+    {
+      "name": "status_highlight_modify",
+      "on": [
+        {
+          "events": {"signal": "status_highlight_tuple"},
+          "update": "modify(\"status_highlight_store\", status_highlight_toggle ? null : status_highlight_tuple, status_highlight_toggle ? null : true, status_highlight_toggle ? status_highlight_tuple : null)"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "layer_0_marks",
+      "type": "symbol",
+      "style": ["circle"],
+      "interactive": true,
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "opacity": [
+            {
+              "test": "!length(data(\"status_highlight_store\")) || vlSelectionTest(\"status_highlight_store\", datum)",
+              "value": 0.6
+            },
+            {"value": 0.2}
+          ],
+          "fill": {"scale": "color", "field": "Status"},
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"], \"Status\": isValid(datum[\"Status\"]) ? datum[\"Status\"] : \"\"+datum[\"Status\"], \"Life Expectancy\": format(datum[\"Life_expectancy\"], \".2f\"), \"GDP per Capita\": format(datum[\"GDP\"], \".2f\"), \"Population\": isValid(datum[\"Population\"]) ? datum[\"Population\"] : \"\"+datum[\"Population\"]}"
+          },
+          "ariaRoleDescription": {"value": "circle"},
+          "description": {
+            "signal": "\"Life Expectancy: \" + (format(datum[\"Life_expectancy\"], \"\")) + \"; GDP per Capita: \" + (format(datum[\"GDP\"], \"\")) + \"; Status: \" + (isValid(datum[\"Status\"]) ? datum[\"Status\"] : \"\"+datum[\"Status\"]) + \"; Population: \" + (format(datum[\"Population\"], \".1s\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+          },
+          "x": {"scale": "x", "field": "Life_expectancy"},
+          "y": {"scale": "y", "field": "GDP"},
+          "size": {"scale": "size", "field": "Population"},
+          "shape": {"value": "circle"}
+        }
+      }
+    },
+    {
+      "name": "layer_1_marks",
+      "type": "text",
+      "style": ["text"],
+      "interactive": false,
+      "from": {"data": "data_1"},
+      "encode": {
+        "update": {
+          "dx": {"value": 50},
+          "dy": {"value": 70},
+          "fontWeight": {"value": "bold"},
+          "fill": {"value": "grey"},
+          "description": {
+            "signal": "\"text_annotation: \" + (isValid(datum[\"text_annotation\"]) ? datum[\"text_annotation\"] : \"\"+datum[\"text_annotation\"])"
+          },
+          "x": {"signal": "width", "mult": 0.5},
+          "y": {"signal": "height", "mult": 0.5},
+          "text": {
+            "signal": "isValid(datum[\"text_annotation\"]) ? datum[\"text_annotation\"] : \"\"+datum[\"text_annotation\"]"
+          },
+          "fontSize": {"value": 15},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"}
+        }
+      }
+    },
+    {
+      "name": "layer_2_marks",
+      "type": "text",
+      "style": ["text"],
+      "interactive": false,
+      "from": {"data": "data_2"},
+      "encode": {
+        "update": {
+          "dx": {"value": -20},
+          "dy": {"value": -10},
+          "fill": {"value": "black"},
+          "opacity": [
+            {
+              "test": "!length(data(\"status_highlight_store\")) || vlSelectionTest(\"status_highlight_store\", datum)",
+              "value": 1
+            },
+            {"value": 0.1}
+          ],
+          "description": {
+            "signal": "\"Life_expectancy: \" + (format(datum[\"Life_expectancy\"], \"\")) + \"; GDP: \" + (format(datum[\"GDP\"], \"\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+          },
+          "x": {"scale": "x", "field": "Life_expectancy"},
+          "y": {"scale": "y", "field": "GDP"},
+          "text": {
+            "signal": "isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"]"
+          },
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": [45, 90],
+      "range": [0, {"signal": "width"}],
+      "nice": true,
+      "zero": false
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": [0, 130000],
+      "range": [{"signal": "height"}, 0],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": ["Developed", "Developing"],
+      "range": ["#984ea3", "#377eb8"]
+    },
+    {
+      "name": "size",
+      "type": "threshold",
+      "domain": [1000, 10000, 1000000, 10000000],
+      "range": [10, 50, 100, 150, 200, 300]
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "tickCount": 5,
+      "gridScale": "y",
+      "grid": true,
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "tickCount": 10,
+      "gridScale": "x",
+      "grid": true,
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Life Expectancy",
+      "tickCount": 5,
+      "labelFlush": true,
+      "labelOverlap": true,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "GDP per Capita",
+      "tickCount": 10,
+      "labelOverlap": true,
+      "zindex": 0
+    }
+  ],
+  "legends": [
+    {
+      "title": "Status",
+      "fill": "color",
+      "symbolType": "circle",
+      "encode": {
+        "labels": {
+          "name": "Status_legend_labels",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"status_highlight_store\")) || (status_highlight[\"Status\"] && indexof(status_highlight[\"Status\"], datum.value) >= 0))",
+                "value": 1
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "symbols": {
+          "name": "Status_legend_symbols",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"status_highlight_store\")) || (status_highlight[\"Status\"] && indexof(status_highlight[\"Status\"], datum.value) >= 0))",
+                "value": 0.6
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "entries": {
+          "name": "Status_legend_entries",
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}}
+        }
+      }
+    },
+    {
+      "format": ".1s",
+      "size": "size",
+      "labelOverlap": "greedy",
+      "symbolType": "circle",
+      "title": "Population",
+      "encode": {
+        "symbols": {
+          "update": {
+            "fill": {"value": "black"},
+            "fillOpacity": {"value": 0.6},
+            "opacity": {"value": 0.6},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ],
+  "config": {}
+}

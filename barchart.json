@@ -1,0 +1,101 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "Life Expectancy Rank",
+    "width": 800,
+    "height": 500,
+    "data": {
+      "url": "https://raw.githubusercontent.com/qtpatootie01/Homework10_LifeExpectancy/main/LifeExpectancy2014.csv"
+    },
+    "transform": [
+      {"calculate": "toNumber(datum.Life_expectancy)", "as": "Life Expectancy"},
+      {
+        "window": [{"op": "rank", "as": "rank"}],
+        "sort": [{"field": "Life Expectancy", "order": "descending"}]
+      },
+      {"filter": "datum.rank <= top_n_rank"}
+    ],
+    "params": [
+      {
+        "name": "top_n_rank", "value": 10,
+        "bind": {
+          "input": "range", "min": 1, "max": 100, "step": 1,
+          "name": "Rank of the Countries: "
+        }
+      }
+    ],
+    "layer": [
+      {
+        "params": [{"name": "brush", "select": {"type": "interval", "encodings": ["y"]}}],
+        "mark": "bar",
+        "encoding": {
+          "x": {
+            "field": "Life Expectancy",
+            "type": "quantitative",
+            "title": "Life Expectancy",
+            "aggregate": "mean"
+            
+          },
+          "y": {
+            "field": "Country",
+            "title": "Country",
+            "type": "nominal",
+            "axis": null,
+            "sort": {
+              "field": "Life Expectancy",
+              "op": "average",
+              "order": "descending"
+            }
+          },
+          "color": {
+            "field": "Life Expectancy",
+            "scale": {
+                "type": "threshold",
+                "domain": [75, 85, 95, 100],
+                "range": [
+                    "#DBCBC8",
+                    "#A3E4D7",
+                    "#7FB3D5",
+                    "#C39BD3"  
+                ]
+            },
+            "legend": null
+          },
+          "opacity": {"condition": {"param": "brush", "value": 1}, "value": 0.5},
+          "tooltip": [
+            {"field": "Country", "type": "nominal", "title": "Country"},
+            {
+              "field": "Life Expectancy",
+              "type": "quantitative",
+              "title": "Life Expectancy"
+            },
+            {
+              "field": "rank", 
+              "title": "Rank"
+            }
+          ]
+        }
+      },
+      {
+        "mark": {"type": "text", "align": "left", "x": 5,
+        "fontWeight":"bold"},
+        "encoding": {
+          "y": {
+            "field": "Country",
+            "title": "Country",
+            "type": "nominal",
+            "axis": null,
+            "sort": {
+              "field": "Life Expectancy",
+              "op": "average",
+              "order": "descending"
+            }
+          },
+          "text": {"field": "Country"},
+          "color": {"value": "black"}
+        }
+      }
+    ],
+    "config": {
+      
+    }
+  }

@@ -1,0 +1,141 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    
+    "data": { "url": "https://raw.githubusercontent.com/qtpatootie01/LifeExpectancy_A2/main/data/butterfly_data.csv"},
+    "transform": [
+      {"calculate": "datum.Status == 'Developing' ? 'Developing' : 'Developed'", "as": "Status"}
+    ],
+    "spacing": 0,
+    "hconcat": [
+            {
+            "width": 250,
+            "height": 400,
+        "transform": [{
+            "filter": {"field": "Status", "equal": "Developing"}
+        }],
+        "title": "Developing",
+        "layer": [
+        {"mark": "bar",
+            "encoding": {
+                "y": {
+                "field": "Region", "axis": null, "sort": "descending"
+                },
+                "x": {
+                "aggregate": "sum", "field": "AvgLifeExpectancy",
+                "title": "Average Life Expectancy",
+                "axis": {"format": "s"},
+                "sort": "descending","scale": {"domain": [0, 90]}
+                },
+                "color": {
+                "field": "Status",
+                "scale": {"range": ["#FAAFBA", "#89CFF0"]},
+                "legend": null
+                },
+                "tooltip": [
+                  {
+                      "field": "Status", 
+                      "type": "nominal", 
+                      "title": "Status"
+                  },
+                  {
+                    "field": "Region", 
+                    "type": "nominal", 
+                    "title": "Region"
+                  },
+                  {
+                    "field": "AvgLifeExpectancy",
+                    "type": "quantitative",
+                    "title": "Average Life Expectancy"
+                  }
+                  ]
+            }
+        },{
+            "mark": {
+              "type": "text",
+              "baseline": "top",
+              "dx": 100,
+              "dy": -5
+            }
+          }
+    
+    ]
+
+        }, 
+
+    {
+      "width": 150,
+      "height": 400,
+      "view": {"stroke": null},
+      "mark": {
+        "type": "text",
+        "align": "center"
+      },
+      "encoding": {
+        "y": {"field": "Region", "type": "ordinal", "axis": null, "sort": "descending"},
+        "text": {"field": "Region", "type": "ordinal"}
+        
+      }
+    }, 
+    
+    {
+        "width": 250,
+        "height": 400,
+      "transform": [{
+        "filter": {"field": "Status", "equal": "Developed"}
+      }],
+      "title": "Developed",
+        "layer": [
+        {
+      "mark": "bar",
+      "encoding": {
+        "y": {
+          "field": "Region", "title": null,
+          "axis": null, "sort": "descending"
+        },
+        "x": {
+          "aggregate": "sum", "field": "AvgLifeExpectancy",
+          "title": "Average Life Expectancy",
+          "axis": {"format": "s"}
+        },
+        "color": {
+          "field": "Status",
+          "legend": null
+        },
+        "tooltip": [
+          {
+              "field": "Status", 
+              "type": "nominal", 
+              "title": "Status"
+          },
+          {
+            "field": "Region", 
+            "type": "nominal", 
+            "title": "Region"
+          },
+          {
+            "field": "AvgLifeExpectancy",
+            "type": "quantitative",
+            "title": "Average Life Expectancy"
+          }
+          ]
+      }}
+        
+  
+    
+    ]}],
+    "config": {
+      "view": {"stroke": null},
+      "axis": {"grid": false},
+      "style": {
+        "guide-title": {
+        "font": "Source Sans Pro, sans-serif",
+        "fontSize":15
+        },
+        "text": {
+        "font": "Source Sans Pro, sans-serif",
+        "fontWeight": "normal",
+        "fontSize":15
+        }
+    }
+    }
+  }
